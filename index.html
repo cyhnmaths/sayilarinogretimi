@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sayı Laboratuvarı - Rasyonel ve İrrasyonel Sayılar</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tone.js for Sound Effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .font-display {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .number-chip {
+            touch-action: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: grab;
+        }
+        .number-chip:active {
+            cursor: grabbing;
+            transform: scale(1.08);
+            z-index: 50;
+        }
+        .drop-zone {
+            transition: all 0.3s ease;
+        }
+        .drop-zone.drag-over {
+            transform: scale(1.02);
+            border-color: #38bdf8;
+            background-color: rgba(56, 189, 248, 0.15);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden bg-slate-950 text-slate-100">
+
+    <!-- Header Section -->
+    <header class="w-full bg-slate-900/90 border-b border-slate-800 p-4 sticky top-0 z-40 shadow-xl backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-3 bg-indigo-600/30 border border-indigo-500/40 rounded-2xl text-indigo-400">
+                    <i class="fa-solid fa-flask-vial text-3xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold font-display text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400">
+                        SAYI LABORATUVARI
+                    </h1>
+                    <p class="text-xs text-slate-400">MAT.8.1.3 - Rasyonel ve İrrasyonel Sayıları Keşfetme</p>
+                </div>
+            </div>
+
+            <!-- Dashboard / Scoreboard -->
+            <div class="flex items-center gap-4 sm:gap-6 bg-slate-800/80 px-5 py-2.5 rounded-2xl border border-slate-700">
+                <div class="text-center">
+                    <span class="block text-xs text-slate-400 font-medium">İlerleme</span>
+                    <span id="progress-text" class="text-lg font-bold text-cyan-400 font-display">0 / 12</span>
+                </div>
+                <div class="h-8 w-px bg-slate-700"></div>
+                <div class="text-center">
+                    <span class="block text-xs text-slate-400 font-medium">Skor</span>
+                    <span id="score-text" class="text-lg font-bold text-emerald-400 font-display">0 Puan</span>
+                </div>
+                <div class="h-8 w-px bg-slate-700"></div>
+                <button id="reset-btn" class="p-2.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded-xl transition-all" title="Yeniden Başlat">
+                    <i class="fa-solid fa-rotate-right text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Interactive Area -->
+    <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 flex-grow flex flex-col gap-6">
+
+        <!-- Top Section: Number Pool & Microscope Inspector -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Number Pool (Sayı Havuzu) -->
+            <div class="lg:col-span-7 glass-card rounded-3xl p-5 flex flex-col justify-between border border-slate-800 shadow-2xl">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-slate-200 flex items-center gap-2 font-display">
+                            <i class="fa-solid fa-cubes text-amber-400"></i> İncelenecek Sayı Havuzu
+                        </h2>
+                        <span class="text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                            Sürükle ya da Tıkla
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-4">Sayıları doğrudan tüplere sürükleyebilir veya üzerine tıklayarak mikro-analiz yapabilirsiniz.</p>
+                    
+                    <!-- Chips Container -->
+                    <div id="number-pool" class="flex flex-wrap gap-3 min-h-[130px] p-3 bg-slate-900/60 rounded-2xl border border-dashed border-slate-800 items-center justify-center">
+                        <!-- Number chips injected dynamically -->
+                    </div>
+                </div>
+
+                <div id="pool-empty-msg" class="hidden text-center py-4 text-emerald-400 font-medium text-sm">
+                    <i class="fa-solid fa-circle-check mr-2"></i> Harika! Tüm sayıları tüplere başarıyla yerleştirdiniz.
+                </div>
+            </div>
+
+            <!-- Inspector / Microscope Panel (İnceleme Mikroskobu) -->
+            <div class="lg:col-span-5 glass-card rounded-3xl p-5 border border-slate-800 shadow-2xl flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute -right-8 -top-8 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h2 class="text-lg font-bold text-slate-200 flex items-center gap-2 font-display">
+                            <i class="fa-solid fa-microscope text-cyan-400"></i> Sayı İnceleme Mikroskobu
+                        </h2>
+                        <span id="active-symbol" class="text-xl font-bold font-display px-3 py-1 bg-indigo-950 text-indigo-300 rounded-xl border border-indigo-800/50">
+                            ?
+                        </span>
+                    </div>
+
+                    <!-- Microscope Display -->
+                    <div id="inspector-content" class="space-y-3 bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-sm">
+                        <p class="text-slate-400 italic text-center py-6">
+                            Analiz etmek için havuzdan bir sayı seçin veya sürükleyin...
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Guidance / Hint Box -->
+                <div id="hint-box" class="mt-4 p-3.5 bg-amber-950/40 border border-amber-500/30 rounded-2xl hidden">
+                    <div class="flex gap-2.5 items-start">
+                        <i class="fa-solid fa-lightbulb text-amber-400 text-lg mt-0.5"></i>
+                        <div>
+                            <span class="block text-xs font-bold text-amber-300 uppercase tracking-wider mb-0.5">Dedektif İpucu</span>
+                            <p id="hint-text" class="text-xs text-amber-100 leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Section: Target Jars / Drop Zones (Q vs I) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Rasyonel Sayılar (Q) Drop Zone -->
+            <div id="rational-zone" data-type="rational" class="drop-zone glass-card rounded-3xl p-6 border-2 border-emerald-500/30 bg-emerald-950/10 flex flex-col min-h-[280px] shadow-xl relative group">
+                <div class="flex justify-between items-center mb-4 border-b border-emerald-500/20 pb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-bold font-display text-xl">
+                            Q
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-emerald-300 font-display">Rasyonel Sayılar</h3>
+                            <p class="text-xs text-emerald-400/70">a/b şeklinde yazılabilen sayılar (b ≠ 0)</p>
+                        </div>
+                    </div>
+                    <span id="rational-count" class="text-xs font-bold bg-emerald-900/60 text-emerald-300 px-3 py-1 rounded-full border border-emerald-700">
+                        0 Adet
+                    </span>
+                </div>
+
+                <div id="rational-list" class="flex-grow flex flex-wrap gap-2.5 content-start p-3 bg-slate-950/40 rounded-2xl border border-emerald-900/30 min-h-[160px]">
+                    <!-- Dropped rational elements go here -->
+                </div>
+            </div>
+
+            <!-- İrrasyonel Sayılar (I) Drop Zone -->
+            <div id="irrational-zone" data-type="irrational" class="drop-zone glass-card rounded-3xl p-6 border-2 border-purple-500/30 bg-purple-950/10 flex flex-col min-h-[280px] shadow-xl relative group">
+                <div class="flex justify-between items-center mb-4 border-b border-purple-500/20 pb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400 font-bold font-display text-xl">
+                            I
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-purple-300 font-display">İrrasyonel Sayılar</h3>
+                            <p class="text-xs text-purple-400/70">a/b şeklinde yazılamayan sayılar</p>
+                        </div>
+                    </div>
+                    <span id="irrational-count" class="text-xs font-bold bg-purple-900/60 text-purple-300 px-3 py-1 rounded-full border border-purple-700">
+                        0 Adet
+                    </span>
+                </div>
+
+                <div id="irrational-list" class="flex-grow flex flex-wrap gap-2.5 content-start p-3 bg-slate-950/40 rounded-2xl border border-purple-900/30 min-h-[160px]">
+                    <!-- Dropped irrational elements go here -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Exploration Summary Table (End Game Summary) -->
+        <div id="summary-section" class="hidden glass-card rounded-3xl p-6 border border-indigo-500/30 bg-indigo-950/20 shadow-2xl transition-all">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-indigo-300 font-display flex items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap text-amber-400"></i> Keşif Özeti ve Değerlendirme
+                    </h2>
+                    <p class="text-xs text-slate-400">Tebrikler! Sayıların doğasını inceleyerek kategorize ettiniz. İşte keşfettiklerinizin özeti:</p>
+                </div>
+                <button id="download-summary-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-check"></i> Anladım & Özeti Kapat
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Rational Rules -->
+                <div class="bg-slate-900/90 p-4 rounded-2xl border border-emerald-500/30">
+                    <h3 class="text-emerald-400 font-bold text-sm mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i> Rasyonel Sayıların Özellikleri (Q)
+                    </h3>
+                    <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                        <li>Tam kare olan köklü ifadeler kök dışına çıkar ($\sqrt{16} = 4$).</li>
+                        <li>Ondalık kısımları sonlu veya devirli olan sayılar kesre dönüştürülebilir.</li>
+                        <li>Tam sayılar ve doğal sayılar paydası 1 olan rasyonel sayılardır.</li>
+                    </ul>
+                </div>
+
+                <!-- Irrational Rules -->
+                <div class="bg-slate-900/90 p-4 rounded-2xl border border-purple-500/30">
+                    <h3 class="text-purple-400 font-bold text-sm mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-xmark"></i> İrrasyonel Sayıların Özellikleri (I)
+                    </h3>
+                    <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                        <li>Kök dışına tam çıkamayan sayılar ($\sqrt{7}, \sqrt{20}$).</li>
+                        <li>Virgülden sonrası düzensiz ve sonsuza kadar devam eden sayılar.</li>
+                        <li>$\pi$ (Pi) gibi özel matematiksel sabitler.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full bg-slate-900/60 border-t border-slate-800/80 py-3 text-center text-xs text-slate-500">
+        8. Sınıf Matematik Ders Planı Uygulaması &copy; 2026 - Rasyonel ve İrrasyonel Sayılar
+    </footer>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="modal-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-slate-900 border border-slate-700 p-6 rounded-3xl max-w-md w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300" id="modal-box">
+            <div class="text-center">
+                <div id="modal-icon" class="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-2xl mb-4 bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                    <i class="fa-solid fa-circle-info"></i>
+                </div>
+                <h3 id="modal-title" class="text-lg font-bold text-slate-100 font-display mb-2">Bilgilendirme</h3>
+                <p id="modal-message" class="text-xs text-slate-300 leading-relaxed mb-6"></p>
+                <button id="modal-close-btn" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all">
+                    Tamam
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic Script -->
+    <script>
+        // Target Dataset MAT.8.1.3
+        const NUMBERS_DATA = [
+            {
+                id: 'n1',
+                symbol: '√16',
+                type: 'rational',
+                rootInfo: 'Tam kare sayıdır (16 = 4²). Dışarı 4 olarak çıkar.',
+                decimalInfo: 'Virgülsüz tam sayıdır (4.0).',
+                fractionInfo: '4 / 1 şeklinde yazılabilir.',
+                hint: '√16 dışarı 4 olarak tam çıkar! Tam sayılar a/b şeklinde yazılabilir.'
+            },
+            {
+                id: 'n2',
+                symbol: '√7',
+                type: 'irrational',
+                rootInfo: 'Tam kare değildir! Kök dışına tam çıkamaz (2.645758...)',
+                decimalInfo: 'Virgülden sonrası sonsuz ve düzensiz devam eder.',
+                fractionInfo: 'a/b şeklinde yazılamaz!',
+                hint: '7 sayısı tam kare bir sayı değildir. Kökten tam olarak kurtulamadığı için İrrasyoneldir.'
+            },
+            {
+                id: 'n3',
+                symbol: '0,333...',
+                type: 'rational',
+                rootInfo: 'Köklü ifade içermez.',
+                decimalInfo: 'Devirli ondalık açılımdır (3 sürekli tekrar eder).',
+                fractionInfo: '1 / 3 kesrine eşittir.',
+                hint: 'Virgülden sonrası BELLİ BİR KURALA göre düzenli tekrar eden (devirli) sayılar Rasyoneldir!'
+            },
+            {
+                id: 'n4',
+                symbol: 'π',
+                type: 'irrational',
+                rootInfo: 'Özel matematiksel sabittir.',
+                decimalInfo: 'Virgülden sonraki basamakları düzensiz sonsuza gider (3.14159...)',
+                fractionInfo: 'İki tam sayının oranı (a/b) şeklinde kesin olarak yazılamaz.',
+                hint: 'Pi (π) sayısının virgülden sonrası belli bir kurala uymadan sonsuza gider. Bu yüzden İrrasyoneldir.'
+            },
+            {
+                id: 'n5',
+                symbol: '-5',
+                type: 'rational',
+                rootInfo: 'Köklü ifade içermez.',
+                decimalInfo: 'Negatif tam sayıdır.',
+                fractionInfo: '-5 / 1 şeklinde yazılabilir.',
+                hint: 'Tüm negatif ve pozitif tam sayılar paydalarına 1 yazılarak rasyonel sayı yapılabilir.'
+            },
+            {
+                id: 'n6',
+                symbol: '3/4',
+                type: 'rational',
+                rootInfo: 'Köklü ifade içermez.',
+                decimalInfo: 'Ondalık gösterimi 0.75 olup sonludur.',
+                fractionInfo: 'Zaten doğrudan a/b (3/4) biçimindedir.',
+                hint: 'Doğrudan a/b formunda verilmiş tam sayı oranları Rasyonel sayılardır.'
+            },
+            {
+                id: 'n7',
+                symbol: '√0,09',
+                type: 'rational',
+                rootInfo: '0,09 = 9/100 demektir. Kök dışına 3/10 (0.3) olarak çıkar.',
+                decimalInfo: 'Ondalık hali 0.3 sonludur.',
+                fractionInfo: '3 / 10 şeklinde yazılır.',
+                hint: '√0.09 = √(9/100) = 3/10 olarak kök dışına tamamen kurtulabilir! Bu yüzden Rasyoneldir.'
+            },
+            {
+                id: 'n8',
+                symbol: '√20',
+                type: 'irrational',
+                rootInfo: '20 tam kare değildir (2√5 olarak kalır, √5 dışarı çıkamaz).',
+                decimalInfo: 'Virgülden sonrası düzensiz sonsuz devam eder (4.4721...)',
+                fractionInfo: 'a/b biçiminde yazılamaz.',
+                hint: '20 sayısı bir sayının karesi değildir. Kök içinde sayı kaldığı için İrrasyoneldir.'
+            },
+            {
+                id: 'n9',
+                symbol: '0,121314...',
+                type: 'irrational',
+                rootInfo: 'Köklü ifade içermez.',
+                decimalInfo: 'Virgülden sonrası KURALSIZ ve DÜZENSİZ biçimde sonsuza gitmektedir.',
+                fractionInfo: 'Devir kuralı olmadığı için a/b şeklinde dönüştürülemez.',
+                hint: 'Noktalardan (...) önceki sayılara bakın: Düzenli tekrar eden bir devir yok, kural bilinmiyor. İrrasyoneldir!'
+            },
+            {
+                id: 'n10',
+                symbol: '2,454545...',
+                type: 'rational',
+                rootInfo: 'Köklü ifade içermez.',
+                decimalInfo: 'Virgülden sonra "45" bloğu sürekli düzenli olarak devretmektedir.',
+                fractionInfo: 'Devirli ondalık sayı formülüyle rasyonel kesre dönüştürülebilir.',
+                hint: 'Burada "45" sayıları düzenli tekrar ediyor (devrediyor). Devirli sayılar Rasyoneldir!'
+            },
+            {
+                id: 'n11',
+                symbol: '√25 / 2',
+                type: 'rational',
+                rootInfo: '√25 = 5 olur. İfade 5/2 halini alır.',
+                decimalInfo: '2.5 değerine eşittir.',
+                fractionInfo: '5 / 2 şeklinde iki tam sayının oranıdır.',
+                hint: '√25 dışarı 5 olarak çıkar. İşlem 5/2 olur ve rasyoneldir.'
+            },
+            {
+                id: 'n12',
+                symbol: '√2 / 3',
+                type: 'irrational',
+                rootInfo: 'Paydaki √2 dışarı çıkamaz (irrasyoneldir).',
+                decimalInfo: 'Virgülden sonrası kural dışı kalır.',
+                fractionInfo: 'Pay kısmı tam sayı olmadığı için rasyonel a/b tanımına uymaz.',
+                hint: 'Pay kısmındaki √2 kökten kurtulamadığı için tüm ifade İrrasyonel kalır.'
+            }
+        ];
+
+        // App State
+        let state = {
+            score: 0,
+            placedCount: 0,
+            activeNumber: null,
+            results: {}
+        };
+
+        // Sound Effects Engine via Tone.js
+        const SoundFX = {
+            init: false,
+            synth: null,
+
+            setup() {
+                if(this.init) return;
+                try {
+                    this.synth = new Tone.PolySynth(Tone.Synth).toDestination();
+                    this.synth.volume.value = -12;
+                    this.init = true;
+                } catch(e) {
+                    console.log('Audio init skipped', e);
+                }
+            },
+            playCorrect() {
+                if(!this.init) this.setup();
+                if(!this.synth) return;
+                Tone.start();
+                this.synth.triggerAttackRelease(["C5", "E5", "G5"], "8n");
+            },
+            playWrong() {
+                if(!this.init) this.setup();
+                if(!this.synth) return;
+                Tone.start();
+                this.synth.triggerAttackRelease(["A3", "F3"], "8n");
+            },
+            playClick() {
+                if(!this.init) this.setup();
+                if(!this.synth) return;
+                Tone.start();
+                this.synth.triggerAttackRelease(["E5"], "16n");
+            }
+        };
+
+        // UI Elements
+        const poolEl = document.getElementById('number-pool');
+        const inspectorContentEl = document.getElementById('inspector-content');
+        const activeSymbolEl = document.getElementById('active-symbol');
+        const hintBoxEl = document.getElementById('hint-box');
+        const hintTextEl = document.getElementById('hint-text');
+        const scoreTextEl = document.getElementById('score-text');
+        const progressTextEl = document.getElementById('progress-text');
+        const rationalListEl = document.getElementById('rational-list');
+        const irrationalListEl = document.getElementById('irrational-list');
+        const rationalCountEl = document.getElementById('rational-count');
+        const irrationalCountEl = document.getElementById('irrational-count');
+        const poolEmptyMsgEl = document.getElementById('pool-empty-msg');
+        const summarySectionEl = document.getElementById('summary-section');
+
+        // Initialize Application
+        window.addEventListener('DOMContentLoaded', () => {
+            initGame();
+            setupEventListeners();
+        });
+
+        function initGame() {
+            state.score = 0;
+            state.placedCount = 0;
+            state.activeNumber = null;
+            state.results = {};
+
+            updateScoreboard();
+            renderPool();
+            resetInspector();
+            
+            rationalListEl.innerHTML = '';
+            irrationalListEl.innerHTML = '';
+            rationalCountEl.textContent = '0 Adet';
+            irrationalCountEl.textContent = '0 Adet';
+            poolEmptyMsgEl.classList.add('hidden');
+            summarySectionEl.classList.add('hidden');
+        }
+
+        function renderPool() {
+            poolEl.innerHTML = '';
+            NUMBERS_DATA.forEach(num => {
+                const chip = document.createElement('div');
+                chip.id = num.id;
+                chip.draggable = true;
+                chip.className = 'number-chip bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold font-display px-4 py-2.5 rounded-2xl border border-slate-600 shadow-md flex items-center gap-2 cursor-grab';
+                chip.innerHTML = `<i class="fa-solid fa-atom text-slate-500 text-xs"></i> <span>${num.symbol}</span>`;
+                
+                // Click to inspect
+                chip.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    SoundFX.playClick();
+                    inspectNumber(num);
+                });
+
+                // Drag Events
+                chip.addEventListener('dragstart', (e) => {
+                    inspectNumber(num);
+                    e.dataTransfer.setData('text/plain', num.id);
+                    chip.classList.add('opacity-50');
+                });
+
+                chip.addEventListener('dragend', () => {
+                    chip.classList.remove('opacity-50');
+                });
+
+                poolEl.appendChild(chip);
+            });
+        }
+
+        function inspectNumber(num) {
+            state.activeNumber = num;
+            activeSymbolEl.textContent = num.symbol;
+            activeSymbolEl.className = 'text-xl font-bold font-display px-3 py-1 bg-indigo-900 text-cyan-300 rounded-xl border border-cyan-500/40 animate-pulse';
+
+            inspectorContentEl.innerHTML = `
+                <div class="space-y-2.5">
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-square-root-variable text-cyan-400 mt-1"></i>
+                        <div>
+                            <span class="text-xs text-slate-400 font-semibold block">Kök Durumu:</span>
+                            <span class="text-slate-200 text-xs">${num.rootInfo}</span>
+                        </div>
+                    </div>
+                    <div class="h-px bg-slate-800"></div>
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-arrow-right-a-z text-amber-400 mt-1"></i>
+                        <div>
+                            <span class="text-xs text-slate-400 font-semibold block">Ondalık / Virgül Kuralı:</span>
+                            <span class="text-slate-200 text-xs">${num.decimalInfo}</span>
+                        </div>
+                    </div>
+                    <div class="h-px bg-slate-800"></div>
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-divide text-emerald-400 mt-1"></i>
+                        <div>
+                            <span class="text-xs text-slate-400 font-semibold block">a/b Oranı Biçimi:</span>
+                            <span class="text-slate-200 text-xs">${num.fractionInfo}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Hide hint initially when selected
+            hintBoxEl.classList.add('hidden');
+        }
+
+        function resetInspector() {
+            activeSymbolEl.textContent = '?';
+            activeSymbolEl.className = 'text-xl font-bold font-display px-3 py-1 bg-indigo-950 text-indigo-300 rounded-xl border border-indigo-800/50';
+            inspectorContentEl.innerHTML = `
+                <p class="text-slate-400 italic text-center py-6">
+                    Analiz etmek için havuzdan bir sayı seçin veya sürükleyin...
+                </p>
+            `;
+            hintBoxEl.classList.add('hidden');
+        }
+
+        function setupEventListeners() {
+            // Drop zones logic
+            const dropZones = document.querySelectorAll('.drop-zone');
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('drag-over');
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    const numId = e.dataTransfer.getData('text/plain');
+                    const targetType = zone.getAttribute('data-type');
+                    
+                    if(numId) {
+                        const numData = NUMBERS_DATA.find(n => n.id === numId);
+                        if(numData) {
+                            evaluatePlacement(numData, targetType);
+                        }
+                    }
+                });
+
+                // Also allow clicking drop zone if a number is actively selected in microscope
+                zone.addEventListener('click', () => {
+                    if(state.activeNumber && !state.results[state.activeNumber.id]) {
+                        const targetType = zone.getAttribute('data-type');
+                        evaluatePlacement(state.activeNumber, targetType);
+                    }
+                });
+            });
+
+            // Reset Button
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                initGame();
+            });
+
+            // Close Modal
+            document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+
+            // Summary button
+            document.getElementById('download-summary-btn').addEventListener('click', () => {
+                summarySectionEl.scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        function evaluatePlacement(numData, targetType) {
+            const isCorrect = (numData.type === targetType);
+
+            if(isCorrect) {
+                // Correct placement
+                SoundFX.playCorrect();
+                state.score += 10;
+                state.placedCount += 1;
+                state.results[numData.id] = true;
+
+                // Move Chip DOM element
+                const chipEl = document.getElementById(numData.id);
+                if(chipEl) {
+                    chipEl.remove();
+                }
+
+                const placedChip = document.createElement('div');
+                placedChip.className = `px-3.5 py-2 rounded-xl text-xs font-bold font-display border shadow-md flex items-center gap-2 animate-bounce ${
+                    targetType === 'rational' 
+                        ? 'bg-emerald-950/80 text-emerald-300 border-emerald-600/50' 
+                        : 'bg-purple-950/80 text-purple-300 border-purple-600/50'
+                }`;
+                placedChip.innerHTML = `<i class="fa-solid fa-check text-xs"></i> ${numData.symbol}`;
+                
+                if(targetType === 'rational') {
+                    rationalListEl.appendChild(placedChip);
+                } else {
+                    irrationalListEl.appendChild(placedChip);
+                }
+
+                updateCounts();
+                updateScoreboard();
+                resetInspector();
+
+                // Check completion
+                if(state.placedCount === NUMBERS_DATA.length) {
+                    triggerWinState();
+                }
+
+            } else {
+                // Incorrect placement - Pedagogical feedback
+                SoundFX.playWrong();
+                state.score = Math.max(0, state.score - 2);
+                updateScoreboard();
+
+                // Show hint guidance in microscope
+                hintTextEl.textContent = numData.hint;
+                hintBoxEl.classList.remove('hidden');
+
+                // Visual shake on zone
+                const zoneEl = document.getElementById(`${targetType}-zone`);
+                zoneEl.classList.add('border-rose-500', 'animate-pulse');
+                setTimeout(() => {
+                    zoneEl.classList.remove('border-rose-500', 'animate-pulse');
+                }, 800);
+            }
+        }
+
+        function updateCounts() {
+            const rCount = rationalListEl.children.length;
+            const iCount = irrationalListEl.children.length;
+            rationalCountEl.textContent = `${rCount} Adet`;
+            irrationalCountEl.textContent = `${iCount} Adet`;
+        }
+
+        function updateScoreboard() {
+            scoreTextEl.textContent = `${state.score} Puan`;
+            progressTextEl.textContent = `${state.placedCount} / ${NUMBERS_DATA.length}`;
+        }
+
+        function triggerWinState() {
+            poolEmptyMsgEl.classList.remove('hidden');
+            summarySectionEl.classList.remove('hidden');
+            
+            // Celebration confetti
+            confetti({
+                particleCount: 120,
+                spread: 80,
+                origin: { y: 0.6 }
+            });
+
+            showModal(
+                'Tebrikler Dedektif!',
+                'Tüm sayıları doğru tüplere yerleştirerek Rasyonel ve İrrasyonel sayıların farkını başarıyla keşfettiniz! Sayfa altındaki keşif özetini inceleyebilirsiniz.',
+                'fa-trophy',
+                'text-amber-400'
+            );
+
+            // Scroll to summary smoothly
+            setTimeout(() => {
+                summarySectionEl.scrollIntoView({ behavior: 'smooth' });
+            }, 800);
+        }
+
+        function showModal(title, message, iconClass = 'fa-circle-info', iconColor = 'text-indigo-400') {
+            const overlay = document.getElementById('modal-overlay');
+            const titleEl = document.getElementById('modal-title');
+            const msgEl = document.getElementById('modal-message');
+            const iconWrap = document.getElementById('modal-icon');
+
+            titleEl.textContent = title;
+            msgEl.textContent = message;
+            iconWrap.className = `w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-2xl mb-4 bg-indigo-500/20 ${iconColor} border border-indigo-500/30`;
+            iconWrap.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+
+            overlay.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+            }, 10);
+        }
+
+        function closeModal() {
+            const overlay = document.getElementById('modal-overlay');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 300);
+        }
+    </script>
+</body>
+</html>
