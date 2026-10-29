@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sayı Laboratuvarı - Rasyonel ve İrrasyonel Sayılar</title>
+    <title>Sayı Laboratuvarı - Rasyonel ve İrrasyonel Sayıları Keşfetme</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -49,6 +49,13 @@
             border-color: #38bdf8;
             background-color: rgba(56, 189, 248, 0.15);
         }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.3; }
+        }
+        .animate-stream {
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -81,16 +88,16 @@
                 SAYI LABORATUVARINA HOŞ GELDİNİZ
             </h2>
             <p class="text-xs text-slate-400 mb-6 leading-relaxed">
-                Rasyonel ve irrasyonel sayıların gizemli dünyasını keşfetmek için önce seni tanıyalım! Laboratuvara hangi isimle kayıt olalım?
+                Rasyonel ve irrasyonel sayıların sonsuz dünyasını keşfetmeye hazır mısın? Laboratuvardaki masana adını yazalım!
             </p>
 
             <form id="name-form" class="space-y-4">
                 <div>
-                    <input type="text" id="player-name-input" required placeholder="Adınızı veya soyadınızı yazın..." 
+                    <input type="text" id="player-name-input" required placeholder="Adınızı yazın..." 
                         class="w-full px-4 py-3 bg-slate-900/90 border border-slate-700 rounded-2xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-sm font-medium transition-all text-center">
                 </div>
                 <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-bold rounded-2xl text-sm shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-door-open"></i> Laboratuvara Giriş Yap
+                    <i class="fa-solid fa-flask text-sm"></i> Keşfe Başla
                 </button>
             </form>
         </div>
@@ -101,7 +108,7 @@
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
                 <div class="p-3 bg-indigo-600/30 border border-indigo-500/40 rounded-2xl text-indigo-400">
-                    <i class="fa-solid fa-flask-vial text-3xl"></i>
+                    <i class="fa-solid fa-atom text-3xl animate-spin" style="animation-duration: 12s;"></i>
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold font-display text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400">
@@ -109,7 +116,7 @@
                     </h1>
                     <p class="text-xs text-slate-400 flex items-center gap-2">
                         <span>MAT.8.1.3 - Keşif Platformu</span>
-                        <span class="text-cyan-400 font-semibold">• Başmühendis: <span id="display-player-name" class="underline">Misafir</span></span>
+                        <span class="text-cyan-400 font-semibold">• Araştırmacı: <span id="display-player-name" class="underline">Misafir</span></span>
                     </p>
                 </div>
             </div>
@@ -140,7 +147,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             <!-- Number Pool -->
-            <div class="lg:col-span-7 glass-card rounded-3xl p-5 flex flex-col justify-between border border-slate-800 shadow-2xl">
+            <div class="lg:col-span-6 glass-card rounded-3xl p-5 flex flex-col justify-between border border-slate-800 shadow-2xl">
                 <div>
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-lg font-bold text-slate-200 flex items-center gap-2 font-display">
@@ -150,7 +157,7 @@
                             Sürükle ya da Tıkla
                         </span>
                     </div>
-                    <p class="text-xs text-slate-400 mb-4">Sayıları doğrudan tüplere sürükleyebilir veya üzerine tıklayarak mikro-analiz yapabilirsiniz.</p>
+                    <p class="text-xs text-slate-400 mb-4">Mikroskopta detaylı incelemek için bir sayı seçin veya doğrudan tüplere sürükleyin.</p>
                     
                     <!-- Chips Container -->
                     <div id="number-pool" class="flex flex-wrap gap-3 min-h-[140px] p-3 bg-slate-900/60 rounded-2xl border border-dashed border-slate-800 items-center justify-center">
@@ -163,8 +170,8 @@
                 </div>
             </div>
 
-            <!-- Inspector / Microscope Panel -->
-            <div class="lg:col-span-5 glass-card rounded-3xl p-5 border border-slate-800 shadow-2xl flex flex-col justify-between relative overflow-hidden">
+            <!-- Inspector / Microscope Panel with Infinite Stream Simulation -->
+            <div class="lg:col-span-6 glass-card rounded-3xl p-5 border border-slate-800 shadow-2xl flex flex-col justify-between relative overflow-hidden">
                 <div class="absolute -right-8 -top-8 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
                 <div>
@@ -177,7 +184,7 @@
                         </span>
                     </div>
 
-                    <!-- Microscope Display -->
+                    <!-- Microscope Display Content -->
                     <div id="inspector-content" class="space-y-3 bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-sm">
                         <p class="text-slate-400 italic text-center py-6">
                             Analiz etmek için havuzdan bir sayı seçin veya sürükleyin...
@@ -190,7 +197,7 @@
                     <div class="flex gap-2.5 items-start">
                         <i class="fa-solid fa-lightbulb text-amber-400 text-lg mt-0.5"></i>
                         <div>
-                            <span class="block text-xs font-bold text-amber-300 uppercase tracking-wider mb-0.5">Dedektif İpucu</span>
+                            <span class="block text-xs font-bold text-amber-300 uppercase tracking-wider mb-0.5">Keşif İpucu</span>
                             <p id="hint-text" class="text-xs text-amber-100 leading-relaxed"></p>
                         </div>
                     </div>
@@ -254,10 +261,10 @@
                     <h2 class="text-xl font-bold text-indigo-300 font-display flex items-center gap-2">
                         <i class="fa-solid fa-graduation-cap text-amber-400"></i> Tebrikler <span id="summary-player-name" class="text-cyan-400"></span>! Keşif Özeti
                     </h2>
-                    <p class="text-xs text-slate-400">Tüm sayıları doğasına uygun olarak başarıyla laboratuvar tüplerine yerleştirdiniz.</p>
+                    <p class="text-xs text-slate-400">Tüm sayıları inceleyip doğru tüplere başarıyla yerleştirdiniz.</p>
                 </div>
                 <button id="close-summary-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-all">
-                    <i class="fa-solid fa-check"></i> Laboratuvarı Sıfırla & Yeniden Başla
+                    <i class="fa-solid fa-rotate-right"></i> Yeniden Dene
                 </button>
             </div>
 
@@ -269,8 +276,8 @@
                     </h3>
                     <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
                         <li>Tam kare köklü ifadeler dışarı tam çıkar ($\sqrt{16} = 4$).</li>
-                        <li>Sonlu veya devirli ondalık gösterimler kesre dönüştürülebilir.</li>
-                        <li>Tüm tam sayılar paydası 1 olan rasyonel sayılardır.</li>
+                        <li>Ondalık kısımları sonlu veya **düzenli devirli** sayılardır.</li>
+                        <li>Her zaman $a/b$ biçiminde iki tam sayının oranı olarak yazılabilir.</li>
                     </ul>
                 </div>
 
@@ -280,9 +287,9 @@
                         <i class="fa-solid fa-circle-xmark"></i> İrrasyonel Sayıların Özellikleri (I)
                     </h3>
                     <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
-                        <li>Kök dışına tam çıkamayan sayılar ($\sqrt{7}, \sqrt{20}$).</li>
-                        <li>Virgülden sonrası kuralısız ve sonsuza kadar giden sayılar.</li>
-                        <li>$\pi$ (Pi) gibi özel matematiksel sabitler.</li>
+                        <li>Kök dışına tam çıkamayan sayılardır ($\sqrt{7}, \sqrt{20}$).</li>
+                        <li>Virgülden sonrası **düzensiz ve sonsuza dek** kural olmadan gider.</li>
+                        <li>$\pi$ gibi özel sabitler iki tam sayının oranı şeklinde yazılamaz.</li>
                     </ul>
                 </div>
             </div>
@@ -292,7 +299,7 @@
 
     <!-- Footer -->
     <footer class="w-full bg-slate-900/60 border-t border-slate-800/80 py-3 text-center text-xs text-slate-500">
-        Muharrem CEYHAN &copy; 2026 - Rasyonel ve İrrasyonel Sayılar Laboratuvarı
+        Muharrem CEYHAN &copy; 2026 - Rasyonel ve İrrasyonel Sayılar Keşif Laboratuvarı
     </footer>
 
     <!-- Application Logic Script -->
@@ -303,7 +310,9 @@
                 symbol: '√16',
                 type: 'rational',
                 rootInfo: 'Tam kare sayıdır (16 = 4²). Dışarı 4 olarak çıkar.',
-                decimalInfo: 'Virgülsüz tam sayıdır (4.0).',
+                decimalStream: '4.00000000...',
+                streamNote: 'Sonlu ve sabit açılım.',
+                numberLinePos: '4.0 noktası üstünde kesin rasyonel konum.',
                 fractionInfo: '4 / 1 şeklinde yazılabilir.',
                 hint: '√16 dışarı 4 olarak tam çıkar! Tam sayılar a/b şeklinde yazılabilir.'
             },
@@ -311,17 +320,21 @@
                 id: 'n2',
                 symbol: '√7',
                 type: 'irrational',
-                rootInfo: 'Tam kare değildir! Kök dışına tam çıkamaz (2.645758...)',
-                decimalInfo: 'Virgülden sonrası sonsuz ve düzensiz devam eder.',
-                fractionInfo: 'a/b şeklinde yazılamaz!',
-                hint: '7 sayısı tam kare değildir. Kökten tam olarak kurtulamadığı için İrrasyoneldir.'
+                rootInfo: 'Tam kare değildir! Kök dışına tam çıkamaz.',
+                decimalStream: '2.645751311064590590501615...',
+                streamNote: 'Düzensiz, sonsuz akış! Tekrar eden blok yok.',
+                numberLinePos: '2.64 ile 2.65 rasyonel kesirleri arasında sıkışır.',
+                fractionInfo: 'a/b şeklinde kesin olarak yazılamaz!',
+                hint: '7 sayısı tam kare değildir. Kökten kurtulamadığı için İrrasyoneldir.'
             },
             {
                 id: 'n3',
                 symbol: '0,333...',
                 type: 'rational',
                 rootInfo: 'Köklü ifade içermez.',
-                decimalInfo: 'Devirli ondalık açılımdır (3 sürekli tekrar eder).',
+                decimalStream: '0.33333333333333333...',
+                streamNote: '3 rakamı düzenli olarak sonsuza dek devreder 🔄',
+                numberLinePos: '0 ile 1 arasında 1/3 tam noktasında durur.',
                 fractionInfo: '1 / 3 kesrine eşittir.',
                 hint: 'Virgülden sonrası düzenli tekrar eden (devirli) sayılar Rasyoneldir!'
             },
@@ -330,8 +343,10 @@
                 symbol: 'π',
                 type: 'irrational',
                 rootInfo: 'Özel matematiksel sabittir.',
-                decimalInfo: 'Virgülden sonraki basamakları düzensiz sonsuza gider (3.14159...)',
-                fractionInfo: 'İki tam sayının oranı şeklinde kesin yazılamaz.',
+                decimalStream: '3.141592653589793238462643...',
+                streamNote: 'Virgülden sonrası kuralısız ve düzen olmadan sonsuza gider ♾️',
+                numberLinePos: '3.141 ile 3.142 rasyonel sayıları arasında kalır.',
+                fractionInfo: 'İki tam sayının oranı şeklinde yazılamaz.',
                 hint: 'Pi (π) sayısının virgülden sonrası kurala uymadan sonsuza gider. İrrasyoneldir.'
             },
             {
@@ -339,7 +354,9 @@
                 symbol: '-5',
                 type: 'rational',
                 rootInfo: 'Köklü ifade içermez.',
-                decimalInfo: 'Negatif tam sayıdır.',
+                decimalStream: '-5.00000000...',
+                streamNote: 'Negatif tam sayıdır.',
+                numberLinePos: 'Sayı doğrusunda -5 noktasında kesin yerdedir.',
                 fractionInfo: '-5 / 1 şeklinde yazılabilir.',
                 hint: 'Tüm negatif ve pozitif tam sayılar paydalarına 1 yazılarak rasyonel yapılabilir.'
             },
@@ -348,7 +365,9 @@
                 symbol: '3/4',
                 type: 'rational',
                 rootInfo: 'Köklü ifade içermez.',
-                decimalInfo: 'Ondalık gösterimi 0.75 olup sonludur.',
+                decimalStream: '0.75000000...',
+                streamNote: 'Ondalık gösterimi 0.75 olup sonludur.',
+                numberLinePos: '0.75 noktasında tam durur.',
                 fractionInfo: 'Doğrudan a/b (3/4) biçimindedir.',
                 hint: 'Doğrudan a/b formunda verilmiş tam sayı oranları Rasyonel sayılardır.'
             },
@@ -356,8 +375,10 @@
                 id: 'n7',
                 symbol: '√0,09',
                 type: 'rational',
-                rootInfo: '0,09 = 9/100. Kök dışına 3/10 (0.3) olarak çıkar.',
-                decimalInfo: 'Ondalık hali 0.3 sonludur.',
+                rootInfo: '0,09 = 9/100. Kök dışına 3/10 (0.3) çıkar.',
+                decimalStream: '0.30000000...',
+                streamNote: 'Kökten tamamen kurtulur.',
+                numberLinePos: 'Sayı doğrusunda 0.3 tam yerindedir.',
                 fractionInfo: '3 / 10 şeklinde yazılır.',
                 hint: '√0.09 = √(9/100) = 3/10 olarak kök dışına kurtulur! Rasyoneldir.'
             },
@@ -366,7 +387,9 @@
                 symbol: '√20',
                 type: 'irrational',
                 rootInfo: '20 tam kare değildir (2√5 olarak kalır).',
-                decimalInfo: 'Virgülden sonrası düzensiz sonsuz devam eder (4.4721...)',
+                decimalStream: '4.472135954999579392818347...',
+                streamNote: 'Kök içinde kaldığı için basamaklar kuralsız akar.',
+                numberLinePos: '4.47 ile 4.48 rasyonel sayıları arasına sıkışır.',
                 fractionInfo: 'a/b biçiminde yazılamaz.',
                 hint: '20 sayısı bir sayının karesi değildir. Kök içinde sayı kaldığı için İrrasyoneldir.'
             },
@@ -375,7 +398,9 @@
                 symbol: '0,121314...',
                 type: 'irrational',
                 rootInfo: 'Köklü ifade içermez.',
-                decimalInfo: 'Virgülden sonrası KURALSIZ ve DÜZENSİZDİR.',
+                decimalStream: '0.121314151617181920...',
+                streamNote: 'Basamaklar artıyor ancak düzenli bir periyot (devir) YOKtur!',
+                numberLinePos: 'Ondalık yaklaştırılabilir fakat tam kesre oturmaz.',
                 fractionInfo: 'Devir kuralı olmadığı için a/b şekline dönüştürülemez.',
                 hint: 'Noktalardan önce düzenli tekrar eden bir devir yok, kural bilinmiyor. İrrasyoneldir!'
             },
@@ -384,8 +409,10 @@
                 symbol: '2,454545...',
                 type: 'rational',
                 rootInfo: 'Köklü ifade içermez.',
-                decimalInfo: 'Virgülden sonra "45" bloğu sürekli düzenli devretmektedir.',
-                fractionInfo: 'Devirli ondalık sayı kuralıyla kesre dönüştürülebilir.',
+                decimalStream: '2.454545454545454545...',
+                streamNote: '"45" sayı bloğu düzenli periyotla devrediyor 🔄',
+                numberLinePos: 'Kesir karşılığı sayı doğrusunda sabittir (270/110).',
+                fractionInfo: 'Devirli sayı kuralıyla kesre dönüştürülebilir.',
                 hint: '"45" sayıları düzenli tekrar ediyor (devrediyor). Devirli sayılar Rasyoneldir!'
             },
             {
@@ -393,7 +420,9 @@
                 symbol: '√25 / 2',
                 type: 'rational',
                 rootInfo: '√25 = 5 olur. İfade 5/2 halini alır.',
-                decimalInfo: '2.5 değerine eşittir.',
+                decimalStream: '2.50000000...',
+                streamNote: 'Ondalık değeri 2.5 olup sonludur.',
+                numberLinePos: '2.5 noktasındadır.',
                 fractionInfo: '5 / 2 şeklinde iki tam sayının oranıdır.',
                 hint: '√25 dışarı 5 olarak çıkar. İşlem 5/2 olur ve rasyoneldir.'
             },
@@ -402,8 +431,10 @@
                 symbol: '√2 / 3',
                 type: 'irrational',
                 rootInfo: 'Paydaki √2 dışarı çıkamaz (irrasyoneldir).',
-                decimalInfo: 'Virgülden sonrası kural dışı kalır.',
-                fractionInfo: 'Pay kısmı tam sayı olmadığı için rasyonel tanımına uymaz.',
+                decimalStream: '0.471404520791031682933896...',
+                streamNote: 'Pay irrasyonel olduğu için oran da irrasyonel kalır.',
+                numberLinePos: '0.471 ile 0.472 rasyonel kesirleri arasındadır.',
+                fractionInfo: 'Pay tam sayı olmadığı için a/b rasyonel tanımına uymaz.',
                 hint: 'Pay kısmındaki √2 kökten kurtulamadığı için tüm ifade İrrasyonel kalır.'
             }
         ];
@@ -507,7 +538,7 @@
         function renderPool() {
             poolEl.innerHTML = '';
             NUMBERS_DATA.forEach(num => {
-                if(state.results[num.id]) return; // Eğer yerleştirildiyse havuza koyma
+                if(state.results[num.id]) return;
                 
                 const chip = document.createElement('div');
                 chip.id = num.id;
@@ -540,29 +571,41 @@
             activeSymbolEl.textContent = num.symbol;
             activeSymbolEl.className = 'text-xl font-bold font-display px-3 py-1 bg-indigo-900 text-cyan-300 rounded-xl border border-cyan-500/40 animate-pulse';
 
+            const streamColor = num.type === 'rational' ? 'text-emerald-400 bg-emerald-950/60 border-emerald-800/60' : 'text-purple-400 bg-purple-950/60 border-purple-800/60';
+
             inspectorContentEl.innerHTML = `
-                <div class="space-y-2.5">
-                    <div class="flex items-start gap-2">
-                        <i class="fa-solid fa-square-root-variable text-cyan-400 mt-1"></i>
-                        <div>
-                            <span class="text-xs text-slate-400 font-semibold block">Kök Durumu:</span>
-                            <span class="text-slate-200 text-xs">${num.rootInfo}</span>
+                <div class="space-y-3">
+                    <!-- Infinite Decimal Stream Simulator -->
+                    <div class="p-3 rounded-xl border ${streamColor}">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                                <i class="fa-solid fa-wave-square text-cyan-400"></i> Ondalık Basamak Akışı
+                            </span>
+                            <span class="text-[10px] text-slate-400">${num.streamNote}</span>
+                        </div>
+                        <div class="font-mono text-xs overflow-x-auto whitespace-nowrap py-1 tracking-wider animate-stream">
+                            ${num.decimalStream}
                         </div>
                     </div>
-                    <div class="h-px bg-slate-800"></div>
-                    <div class="flex items-start gap-2">
-                        <i class="fa-solid fa-arrow-right-a-z text-amber-400 mt-1"></i>
+
+                    <!-- Number Line Pos -->
+                    <div class="flex items-start gap-2 bg-slate-950/40 p-2.5 rounded-xl border border-slate-800">
+                        <i class="fa-solid fa-ruler-horizontal text-amber-400 mt-1"></i>
                         <div>
-                            <span class="text-xs text-slate-400 font-semibold block">Ondalık / Virgül Kuralı:</span>
-                            <span class="text-slate-200 text-xs">${num.decimalInfo}</span>
+                            <span class="text-xs text-slate-400 font-semibold block">Sayı Doğrusu Konumu:</span>
+                            <span class="text-slate-200 text-xs">${num.numberLinePos}</span>
                         </div>
                     </div>
-                    <div class="h-px bg-slate-800"></div>
-                    <div class="flex items-start gap-2">
-                        <i class="fa-solid fa-divide text-emerald-400 mt-1"></i>
-                        <div>
-                            <span class="text-xs text-slate-400 font-semibold block">a/b Oranı Biçimi:</span>
-                            <span class="text-slate-200 text-xs">${num.fractionInfo}</span>
+
+                    <!-- Root & Fraction Info -->
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="bg-slate-950/40 p-2 rounded-xl border border-slate-800">
+                            <span class="text-[10px] text-slate-400 font-semibold block">Kök Durumu:</span>
+                            <span class="text-slate-200">${num.rootInfo}</span>
+                        </div>
+                        <div class="bg-slate-950/40 p-2 rounded-xl border border-slate-800">
+                            <span class="text-[10px] text-slate-400 font-semibold block">a/b Oranı:</span>
+                            <span class="text-slate-200">${num.fractionInfo}</span>
                         </div>
                     </div>
                 </div>
@@ -656,7 +699,6 @@
                 state.score = Math.max(0, state.score - 2);
                 updateScoreboard();
 
-                // Shake effect on the active symbol badge or target zone
                 const zone = document.querySelector(`[data-type="${targetType}"]`);
                 zone.classList.add('border-red-500', 'animate-pulse');
                 setTimeout(() => zone.classList.remove('border-red-500', 'animate-pulse'), 500);
