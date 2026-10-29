@@ -49,7 +49,6 @@
             border-color: #38bdf8;
             background-color: rgba(56, 189, 248, 0.15);
         }
-        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -69,6 +68,34 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between overflow-x-hidden bg-slate-950 text-slate-100">
 
+    <!-- Welcome / Name Modal Overlay -->
+    <div id="welcome-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="glass-card max-w-md w-full p-8 rounded-3xl shadow-2xl border border-indigo-500/30 text-center relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="w-20 h-20 bg-indigo-600/30 border border-indigo-500/40 rounded-3xl mx-auto flex items-center justify-center text-indigo-400 text-3xl mb-5 shadow-inner">
+                <i class="fa-solid fa-flask-vial"></i>
+            </div>
+            
+            <h2 class="text-2xl font-bold font-display text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-300 mb-2">
+                SAYI LABORATUVARINA HOŞ GELDİNİZ
+            </h2>
+            <p class="text-xs text-slate-400 mb-6 leading-relaxed">
+                Rasyonel ve irrasyonel sayıların gizemli dünyasını keşfetmek için önce seni tanıyalım! Laboratuvara hangi isimle kayıt olalım?
+            </p>
+
+            <form id="name-form" class="space-y-4">
+                <div>
+                    <input type="text" id="player-name-input" required placeholder="Adınızı veya soyadınızı yazın..." 
+                        class="w-full px-4 py-3 bg-slate-900/90 border border-slate-700 rounded-2xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-sm font-medium transition-all text-center">
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-bold rounded-2xl text-sm shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-door-open"></i> Laboratuvara Giriş Yap
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Header Section -->
     <header class="w-full bg-slate-900/90 border-b border-slate-800 p-4 sticky top-0 z-40 shadow-xl backdrop-blur-md">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
@@ -80,7 +107,10 @@
                     <h1 class="text-2xl font-bold font-display text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400">
                         SAYI LABORATUVARI
                     </h1>
-                    <p class="text-xs text-slate-400">MAT.8.1.3 - Rasyonel ve İrrasyonel Sayıları Keşfetme</p>
+                    <p class="text-xs text-slate-400 flex items-center gap-2">
+                        <span>MAT.8.1.3 - Keşif Platformu</span>
+                        <span class="text-cyan-400 font-semibold">• Başmühendis: <span id="display-player-name" class="underline">Misafir</span></span>
+                    </p>
                 </div>
             </div>
 
@@ -109,7 +139,7 @@
         <!-- Top Section: Number Pool & Microscope Inspector -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <!-- Number Pool (Sayı Havuzu) -->
+            <!-- Number Pool -->
             <div class="lg:col-span-7 glass-card rounded-3xl p-5 flex flex-col justify-between border border-slate-800 shadow-2xl">
                 <div>
                     <div class="flex justify-between items-center mb-4">
@@ -123,17 +153,17 @@
                     <p class="text-xs text-slate-400 mb-4">Sayıları doğrudan tüplere sürükleyebilir veya üzerine tıklayarak mikro-analiz yapabilirsiniz.</p>
                     
                     <!-- Chips Container -->
-                    <div id="number-pool" class="flex flex-wrap gap-3 min-h-[130px] p-3 bg-slate-900/60 rounded-2xl border border-dashed border-slate-800 items-center justify-center">
-                        <!-- Number chips injected dynamically -->
+                    <div id="number-pool" class="flex flex-wrap gap-3 min-h-[140px] p-3 bg-slate-900/60 rounded-2xl border border-dashed border-slate-800 items-center justify-center">
+                        <!-- Dynamically injected -->
                     </div>
                 </div>
 
                 <div id="pool-empty-msg" class="hidden text-center py-4 text-emerald-400 font-medium text-sm">
-                    <i class="fa-solid fa-circle-check mr-2"></i> Harika! Tüm sayıları tüplere başarıyla yerleştirdiniz.
+                    <i class="fa-solid fa-circle-check mr-2"></i> Harika iş! Tüm sayıları tüplere başarıyla yerleştirdiniz.
                 </div>
             </div>
 
-            <!-- Inspector / Microscope Panel (İnceleme Mikroskobu) -->
+            <!-- Inspector / Microscope Panel -->
             <div class="lg:col-span-5 glass-card rounded-3xl p-5 border border-slate-800 shadow-2xl flex flex-col justify-between relative overflow-hidden">
                 <div class="absolute -right-8 -top-8 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
@@ -189,7 +219,7 @@
                 </div>
 
                 <div id="rational-list" class="flex-grow flex flex-wrap gap-2.5 content-start p-3 bg-slate-950/40 rounded-2xl border border-emerald-900/30 min-h-[160px]">
-                    <!-- Dropped rational elements go here -->
+                    <!-- Dropped elements -->
                 </div>
             </div>
 
@@ -211,7 +241,7 @@
                 </div>
 
                 <div id="irrational-list" class="flex-grow flex flex-wrap gap-2.5 content-start p-3 bg-slate-950/40 rounded-2xl border border-purple-900/30 min-h-[160px]">
-                    <!-- Dropped irrational elements go here -->
+                    <!-- Dropped elements -->
                 </div>
             </div>
 
@@ -222,12 +252,12 @@
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                 <div>
                     <h2 class="text-xl font-bold text-indigo-300 font-display flex items-center gap-2">
-                        <i class="fa-solid fa-graduation-cap text-amber-400"></i> Keşif Özeti ve Değerlendirme
+                        <i class="fa-solid fa-graduation-cap text-amber-400"></i> Tebrikler <span id="summary-player-name" class="text-cyan-400"></span>! Keşif Özeti
                     </h2>
-                    <p class="text-xs text-slate-400">Tebrikler! Sayıların doğasını inceleyerek kategorize ettiniz. İşte keşfettiklerinizin özeti:</p>
+                    <p class="text-xs text-slate-400">Tüm sayıları doğasına uygun olarak başarıyla laboratuvar tüplerine yerleştirdiniz.</p>
                 </div>
-                <button id="download-summary-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-all">
-                    <i class="fa-solid fa-check"></i> Anladım & Özeti Kapat
+                <button id="close-summary-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-check"></i> Laboratuvarı Sıfırla & Yeniden Başla
                 </button>
             </div>
 
@@ -238,9 +268,9 @@
                         <i class="fa-solid fa-circle-check"></i> Rasyonel Sayıların Özellikleri (Q)
                     </h3>
                     <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
-                        <li>Tam kare olan köklü ifadeler kök dışına çıkar ($\sqrt{16} = 4$).</li>
-                        <li>Ondalık kısımları sonlu veya devirli olan sayılar kesre dönüştürülebilir.</li>
-                        <li>Tam sayılar ve doğal sayılar paydası 1 olan rasyonel sayılardır.</li>
+                        <li>Tam kare köklü ifadeler dışarı tam çıkar ($\sqrt{16} = 4$).</li>
+                        <li>Sonlu veya devirli ondalık gösterimler kesre dönüştürülebilir.</li>
+                        <li>Tüm tam sayılar paydası 1 olan rasyonel sayılardır.</li>
                     </ul>
                 </div>
 
@@ -251,7 +281,7 @@
                     </h3>
                     <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
                         <li>Kök dışına tam çıkamayan sayılar ($\sqrt{7}, \sqrt{20}$).</li>
-                        <li>Virgülden sonrası düzensiz ve sonsuza kadar devam eden sayılar.</li>
+                        <li>Virgülden sonrası kuralısız ve sonsuza kadar giden sayılar.</li>
                         <li>$\pi$ (Pi) gibi özel matematiksel sabitler.</li>
                     </ul>
                 </div>
@@ -262,28 +292,11 @@
 
     <!-- Footer -->
     <footer class="w-full bg-slate-900/60 border-t border-slate-800/80 py-3 text-center text-xs text-slate-500">
-        Muharrem CEYHAN &copy; 2026 - Rasyonel ve İrrasyonel Sayılar
+        Muharrem CEYHAN &copy; 2026 - Rasyonel ve İrrasyonel Sayılar Laboratuvarı
     </footer>
-
-    <!-- Custom Modal for Alerts -->
-    <div id="modal-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-slate-900 border border-slate-700 p-6 rounded-3xl max-w-md w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300" id="modal-box">
-            <div class="text-center">
-                <div id="modal-icon" class="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-2xl mb-4 bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
-                    <i class="fa-solid fa-circle-info"></i>
-                </div>
-                <h3 id="modal-title" class="text-lg font-bold text-slate-100 font-display mb-2">Bilgilendirme</h3>
-                <p id="modal-message" class="text-xs text-slate-300 leading-relaxed mb-6"></p>
-                <button id="modal-close-btn" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all">
-                    Tamam
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- Application Logic Script -->
     <script>
-        // Target Dataset MAT.8.1.3
         const NUMBERS_DATA = [
             {
                 id: 'n1',
@@ -301,7 +314,7 @@
                 rootInfo: 'Tam kare değildir! Kök dışına tam çıkamaz (2.645758...)',
                 decimalInfo: 'Virgülden sonrası sonsuz ve düzensiz devam eder.',
                 fractionInfo: 'a/b şeklinde yazılamaz!',
-                hint: '7 sayısı tam kare bir sayı değildir. Kökten tam olarak kurtulamadığı için İrrasyoneldir.'
+                hint: '7 sayısı tam kare değildir. Kökten tam olarak kurtulamadığı için İrrasyoneldir.'
             },
             {
                 id: 'n3',
@@ -310,7 +323,7 @@
                 rootInfo: 'Köklü ifade içermez.',
                 decimalInfo: 'Devirli ondalık açılımdır (3 sürekli tekrar eder).',
                 fractionInfo: '1 / 3 kesrine eşittir.',
-                hint: 'Virgülden sonrası BELLİ BİR KURALA göre düzenli tekrar eden (devirli) sayılar Rasyoneldir!'
+                hint: 'Virgülden sonrası düzenli tekrar eden (devirli) sayılar Rasyoneldir!'
             },
             {
                 id: 'n4',
@@ -318,8 +331,8 @@
                 type: 'irrational',
                 rootInfo: 'Özel matematiksel sabittir.',
                 decimalInfo: 'Virgülden sonraki basamakları düzensiz sonsuza gider (3.14159...)',
-                fractionInfo: 'İki tam sayının oranı (a/b) şeklinde kesin olarak yazılamaz.',
-                hint: 'Pi (π) sayısının virgülden sonrası belli bir kurala uymadan sonsuza gider. Bu yüzden İrrasyoneldir.'
+                fractionInfo: 'İki tam sayının oranı şeklinde kesin yazılamaz.',
+                hint: 'Pi (π) sayısının virgülden sonrası kurala uymadan sonsuza gider. İrrasyoneldir.'
             },
             {
                 id: 'n5',
@@ -328,7 +341,7 @@
                 rootInfo: 'Köklü ifade içermez.',
                 decimalInfo: 'Negatif tam sayıdır.',
                 fractionInfo: '-5 / 1 şeklinde yazılabilir.',
-                hint: 'Tüm negatif ve pozitif tam sayılar paydalarına 1 yazılarak rasyonel sayı yapılabilir.'
+                hint: 'Tüm negatif ve pozitif tam sayılar paydalarına 1 yazılarak rasyonel yapılabilir.'
             },
             {
                 id: 'n6',
@@ -336,23 +349,23 @@
                 type: 'rational',
                 rootInfo: 'Köklü ifade içermez.',
                 decimalInfo: 'Ondalık gösterimi 0.75 olup sonludur.',
-                fractionInfo: 'Zaten doğrudan a/b (3/4) biçimindedir.',
+                fractionInfo: 'Doğrudan a/b (3/4) biçimindedir.',
                 hint: 'Doğrudan a/b formunda verilmiş tam sayı oranları Rasyonel sayılardır.'
             },
             {
                 id: 'n7',
                 symbol: '√0,09',
                 type: 'rational',
-                rootInfo: '0,09 = 9/100 demektir. Kök dışına 3/10 (0.3) olarak çıkar.',
+                rootInfo: '0,09 = 9/100. Kök dışına 3/10 (0.3) olarak çıkar.',
                 decimalInfo: 'Ondalık hali 0.3 sonludur.',
                 fractionInfo: '3 / 10 şeklinde yazılır.',
-                hint: '√0.09 = √(9/100) = 3/10 olarak kök dışına tamamen kurtulabilir! Bu yüzden Rasyoneldir.'
+                hint: '√0.09 = √(9/100) = 3/10 olarak kök dışına kurtulur! Rasyoneldir.'
             },
             {
                 id: 'n8',
                 symbol: '√20',
                 type: 'irrational',
-                rootInfo: '20 tam kare değildir (2√5 olarak kalır, √5 dışarı çıkamaz).',
+                rootInfo: '20 tam kare değildir (2√5 olarak kalır).',
                 decimalInfo: 'Virgülden sonrası düzensiz sonsuz devam eder (4.4721...)',
                 fractionInfo: 'a/b biçiminde yazılamaz.',
                 hint: '20 sayısı bir sayının karesi değildir. Kök içinde sayı kaldığı için İrrasyoneldir.'
@@ -362,18 +375,18 @@
                 symbol: '0,121314...',
                 type: 'irrational',
                 rootInfo: 'Köklü ifade içermez.',
-                decimalInfo: 'Virgülden sonrası KURALSIZ ve DÜZENSİZ biçimde sonsuza gitmektedir.',
-                fractionInfo: 'Devir kuralı olmadığı için a/b şeklinde dönüştürülemez.',
-                hint: 'Noktalardan (...) önceki sayılara bakın: Düzenli tekrar eden bir devir yok, kural bilinmiyor. İrrasyoneldir!'
+                decimalInfo: 'Virgülden sonrası KURALSIZ ve DÜZENSİZDİR.',
+                fractionInfo: 'Devir kuralı olmadığı için a/b şekline dönüştürülemez.',
+                hint: 'Noktalardan önce düzenli tekrar eden bir devir yok, kural bilinmiyor. İrrasyoneldir!'
             },
             {
                 id: 'n10',
                 symbol: '2,454545...',
                 type: 'rational',
                 rootInfo: 'Köklü ifade içermez.',
-                decimalInfo: 'Virgülden sonra "45" bloğu sürekli düzenli olarak devretmektedir.',
-                fractionInfo: 'Devirli ondalık sayı formülüyle rasyonel kesre dönüştürülebilir.',
-                hint: 'Burada "45" sayıları düzenli tekrar ediyor (devrediyor). Devirli sayılar Rasyoneldir!'
+                decimalInfo: 'Virgülden sonra "45" bloğu sürekli düzenli devretmektedir.',
+                fractionInfo: 'Devirli ondalık sayı kuralıyla kesre dönüştürülebilir.',
+                hint: '"45" sayıları düzenli tekrar ediyor (devrediyor). Devirli sayılar Rasyoneldir!'
             },
             {
                 id: 'n11',
@@ -390,33 +403,29 @@
                 type: 'irrational',
                 rootInfo: 'Paydaki √2 dışarı çıkamaz (irrasyoneldir).',
                 decimalInfo: 'Virgülden sonrası kural dışı kalır.',
-                fractionInfo: 'Pay kısmı tam sayı olmadığı için rasyonel a/b tanımına uymaz.',
+                fractionInfo: 'Pay kısmı tam sayı olmadığı için rasyonel tanımına uymaz.',
                 hint: 'Pay kısmındaki √2 kökten kurtulamadığı için tüm ifade İrrasyonel kalır.'
             }
         ];
 
-        // App State
         let state = {
+            playerName: 'Misafir',
             score: 0,
             placedCount: 0,
             activeNumber: null,
             results: {}
         };
 
-        // Sound Effects Engine via Tone.js
         const SoundFX = {
             init: false,
             synth: null,
-
             setup() {
                 if(this.init) return;
                 try {
                     this.synth = new Tone.PolySynth(Tone.Synth).toDestination();
                     this.synth.volume.value = -12;
                     this.init = true;
-                } catch(e) {
-                    console.log('Audio init skipped', e);
-                }
+                } catch(e) { console.log('Audio init skipped', e); }
             },
             playCorrect() {
                 if(!this.init) this.setup();
@@ -438,7 +447,13 @@
             }
         };
 
-        // UI Elements
+        // DOM Elements
+        const welcomeModal = document.getElementById('welcome-modal');
+        const nameForm = document.getElementById('name-form');
+        const playerNameInput = document.getElementById('player-name-input');
+        const displayPlayerName = document.getElementById('display-player-name');
+        const summaryPlayerName = document.getElementById('summary-player-name');
+        
         const poolEl = document.getElementById('number-pool');
         const inspectorContentEl = document.getElementById('inspector-content');
         const activeSymbolEl = document.getElementById('active-symbol');
@@ -453,10 +468,22 @@
         const poolEmptyMsgEl = document.getElementById('pool-empty-msg');
         const summarySectionEl = document.getElementById('summary-section');
 
-        // Initialize Application
+        nameForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = playerNameInput.value.trim();
+            if(name) {
+                state.playerName = name;
+                displayPlayerName.textContent = name;
+                summaryPlayerName.textContent = name;
+                welcomeModal.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => welcomeModal.style.display = 'none', 300);
+                SoundFX.setup();
+                initGame();
+            }
+        });
+
         window.addEventListener('DOMContentLoaded', () => {
-            initGame();
-            setupEventListeners();
+            playerNameInput.focus();
         });
 
         function initGame() {
@@ -480,20 +507,20 @@
         function renderPool() {
             poolEl.innerHTML = '';
             NUMBERS_DATA.forEach(num => {
+                if(state.results[num.id]) return; // Eğer yerleştirildiyse havuza koyma
+                
                 const chip = document.createElement('div');
                 chip.id = num.id;
                 chip.draggable = true;
                 chip.className = 'number-chip bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold font-display px-4 py-2.5 rounded-2xl border border-slate-600 shadow-md flex items-center gap-2 cursor-grab';
                 chip.innerHTML = `<i class="fa-solid fa-atom text-slate-500 text-xs"></i> <span>${num.symbol}</span>`;
                 
-                // Click to inspect
                 chip.addEventListener('click', (e) => {
                     e.stopPropagation();
                     SoundFX.playClick();
                     inspectNumber(num);
                 });
 
-                // Drag Events
                 chip.addEventListener('dragstart', (e) => {
                     inspectNumber(num);
                     e.dataTransfer.setData('text/plain', num.id);
@@ -541,8 +568,8 @@
                 </div>
             `;
 
-            // Hide hint initially when selected
-            hintBoxEl.classList.add('hidden');
+            hintTextEl.textContent = num.hint;
+            hintBoxEl.classList.remove('hidden');
         }
 
         function resetInspector() {
@@ -554,74 +581,54 @@
                 </p>
             `;
             hintBoxEl.classList.add('hidden');
+            state.activeNumber = null;
         }
 
-        function setupEventListeners() {
-            // Drop zones logic
-            const dropZones = document.querySelectorAll('.drop-zone');
+        // Setup drop zones & controls
+        const dropZones = document.querySelectorAll('.drop-zone');
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            });
 
-            dropZones.forEach(zone => {
-                zone.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    zone.classList.add('drag-over');
-                });
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
 
-                zone.addEventListener('dragleave', () => {
-                    zone.classList.remove('drag-over');
-                });
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const numId = e.dataTransfer.getData('text/plain');
+                const targetType = zone.getAttribute('data-type');
+                if(numId) {
+                    const numData = NUMBERS_DATA.find(n => n.id === numId);
+                    if(numData) evaluatePlacement(numData, targetType);
+                }
+            });
 
-                zone.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    zone.classList.remove('drag-over');
-                    const numId = e.dataTransfer.getData('text/plain');
+            zone.addEventListener('click', () => {
+                if(state.activeNumber && !state.results[state.activeNumber.id]) {
                     const targetType = zone.getAttribute('data-type');
-                    
-                    if(numId) {
-                        const numData = NUMBERS_DATA.find(n => n.id === numId);
-                        if(numData) {
-                            evaluatePlacement(numData, targetType);
-                        }
-                    }
-                });
-
-                // Also allow clicking drop zone if a number is actively selected in microscope
-                zone.addEventListener('click', () => {
-                    if(state.activeNumber && !state.results[state.activeNumber.id]) {
-                        const targetType = zone.getAttribute('data-type');
-                        evaluatePlacement(state.activeNumber, targetType);
-                    }
-                });
+                    evaluatePlacement(state.activeNumber, targetType);
+                }
             });
+        });
 
-            // Reset Button
-            document.getElementById('reset-btn').addEventListener('click', () => {
-                initGame();
-            });
-
-            // Close Modal
-            document.getElementById('modal-close-btn').addEventListener('click', closeModal);
-
-            // Summary button
-            document.getElementById('download-summary-btn').addEventListener('click', () => {
-                summarySectionEl.scrollIntoView({ behavior: 'smooth' });
-            });
-        }
+        document.getElementById('reset-btn').addEventListener('click', initGame);
+        document.getElementById('close-summary-btn').addEventListener('click', initGame);
 
         function evaluatePlacement(numData, targetType) {
             const isCorrect = (numData.type === targetType);
 
             if(isCorrect) {
-                // Correct placement
                 SoundFX.playCorrect();
                 state.score += 10;
                 state.placedCount += 1;
                 state.results[numData.id] = true;
 
-                // Move Chip DOM element
                 const chipEl = document.getElementById(numData.id);
-                if(chipEl) {
-                    chipEl.remove();
-                }
+                if(chipEl) chipEl.remove();
 
                 const placedChip = document.createElement('div');
                 placedChip.className = `px-3.5 py-2 rounded-xl text-xs font-bold font-display border shadow-md flex items-center gap-2 animate-bounce ${
@@ -641,89 +648,47 @@
                 updateScoreboard();
                 resetInspector();
 
-                // Check completion
                 if(state.placedCount === NUMBERS_DATA.length) {
                     triggerWinState();
                 }
-
             } else {
-                // Incorrect placement - Pedagogical feedback
                 SoundFX.playWrong();
                 state.score = Math.max(0, state.score - 2);
                 updateScoreboard();
 
-                // Show hint guidance in microscope
-                hintTextEl.textContent = numData.hint;
-                hintBoxEl.classList.remove('hidden');
-
-                // Visual shake on zone
-                const zoneEl = document.getElementById(`${targetType}-zone`);
-                zoneEl.classList.add('border-rose-500', 'animate-pulse');
-                setTimeout(() => {
-                    zoneEl.classList.remove('border-rose-500', 'animate-pulse');
-                }, 800);
+                // Shake effect on the active symbol badge or target zone
+                const zone = document.querySelector(`[data-type="${targetType}"]`);
+                zone.classList.add('border-red-500', 'animate-pulse');
+                setTimeout(() => zone.classList.remove('border-red-500', 'animate-pulse'), 500);
             }
         }
 
         function updateCounts() {
-            const rCount = rationalListEl.children.length;
-            const iCount = irrationalListEl.children.length;
-            rationalCountEl.textContent = `${rCount} Adet`;
-            irrationalCountEl.textContent = `${iCount} Adet`;
+            const rationalCount = Object.keys(state.results).filter(id => NUMBERS_DATA.find(n => n.id === id).type === 'rational').length;
+            const irrationalCount = Object.keys(state.results).filter(id => NUMBERS_DATA.find(n => n.id === id).type === 'irrational').length;
+
+            rationalCountEl.textContent = `${rationalCount} Adet`;
+            irrationalCountEl.textContent = `${irrationalCount} Adet`;
+            progressTextEl.textContent = `${state.placedCount} / 12`;
+
+            if(state.placedCount === NUMBERS_DATA.length) {
+                poolEmptyMsgEl.classList.remove('hidden');
+            }
         }
 
         function updateScoreboard() {
             scoreTextEl.textContent = `${state.score} Puan`;
-            progressTextEl.textContent = `${state.placedCount} / ${NUMBERS_DATA.length}`;
+            progressTextEl.textContent = `${state.placedCount} / 12`;
         }
 
         function triggerWinState() {
-            poolEmptyMsgEl.classList.remove('hidden');
-            summarySectionEl.classList.remove('hidden');
-            
-            // Celebration confetti
             confetti({
                 particleCount: 120,
-                spread: 80,
+                spread: 70,
                 origin: { y: 0.6 }
             });
-
-            showModal(
-                'Tebrikler Dedektif!',
-                'Tüm sayıları doğru tüplere yerleştirerek Rasyonel ve İrrasyonel sayıların farkını başarıyla keşfettiniz! Sayfa altındaki keşif özetini inceleyebilirsiniz.',
-                'fa-trophy',
-                'text-amber-400'
-            );
-
-            // Scroll to summary smoothly
-            setTimeout(() => {
-                summarySectionEl.scrollIntoView({ behavior: 'smooth' });
-            }, 800);
-        }
-
-        function showModal(title, message, iconClass = 'fa-circle-info', iconColor = 'text-indigo-400') {
-            const overlay = document.getElementById('modal-overlay');
-            const titleEl = document.getElementById('modal-title');
-            const msgEl = document.getElementById('modal-message');
-            const iconWrap = document.getElementById('modal-icon');
-
-            titleEl.textContent = title;
-            msgEl.textContent = message;
-            iconWrap.className = `w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-2xl mb-4 bg-indigo-500/20 ${iconColor} border border-indigo-500/30`;
-            iconWrap.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
-
-            overlay.classList.remove('hidden');
-            setTimeout(() => {
-                overlay.classList.remove('opacity-0');
-            }, 10);
-        }
-
-        function closeModal() {
-            const overlay = document.getElementById('modal-overlay');
-            overlay.classList.add('opacity-0');
-            setTimeout(() => {
-                overlay.classList.add('hidden');
-            }, 300);
+            summarySectionEl.classList.remove('hidden');
+            summarySectionEl.scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 </body>
