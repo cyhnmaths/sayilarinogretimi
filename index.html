@@ -31,9 +31,18 @@
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .step-active {
+        .option-btn.selected {
             border-color: #38bdf8 !important;
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            background-color: rgba(56, 189, 248, 0.2) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.35s ease-out forwards;
         }
         ::-webkit-scrollbar {
             width: 8px;
@@ -64,7 +73,7 @@
                 SAYI LABORATUVARINA HOŞ GELDİNİZ
             </h2>
             <p class="text-xs text-slate-400 mb-6 leading-relaxed">
-                Antik sandığı açacak şifreleri keşfetmek için laboratuvara adını yaz ve aramıza katil!
+                Antik sandığı açacak şifreleri keşfetmek için laboratuvara adını yaz ve deneye başla!
             </p>
 
             <form id="name-form" class="space-y-4">
@@ -159,7 +168,7 @@
 
                     <!-- Steps Badges -->
                     <div class="flex items-center gap-2 text-xs font-semibold">
-                        <span id="badge-step-1" class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">1. Tahmin</span>
+                        <span id="badge-step-1" class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">1. Sorgula & Tahmin Et</span>
                         <i class="fa-solid fa-chevron-right text-slate-600"></i>
                         <span id="badge-step-2" class="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-400 border border-slate-700">2. Mikroskop</span>
                         <i class="fa-solid fa-chevron-right text-slate-600"></i>
@@ -167,20 +176,71 @@
                     </div>
                 </div>
 
-                <!-- STEP 1: PREDICTION / ELCITATION -->
-                <div id="step-1-container" class="space-y-4">
-                    <div class="p-4 bg-slate-900/80 rounded-2xl border border-slate-800">
-                        <h4 class="text-sm font-bold text-amber-300 mb-1 flex items-center gap-2">
-                            <i class="fa-solid fa-brain"></i> 1. Adım: İlk İzlenim ve Hipotez Kurma
-                        </h4>
-                        <p class="text-xs text-slate-300 mb-4">Sence bu sayı hakkında ne düşünüyorsun? Bu sayı iki tam sayının oranı ($\frac{a}{b}$) şeklinde yazılabilir mi?</p>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <button onclick="makePrediction('rational')" class="p-3 bg-slate-800 hover:bg-emerald-950/40 border border-slate-700 hover:border-emerald-500/50 rounded-xl text-xs font-semibold text-slate-200 transition-all flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-circle-check text-emerald-400"></i> Kesir Olarak Yazılabilir (Rasyonel Gibi)
-                            </button>
-                            <button onclick="makePrediction('irrational')" class="p-3 bg-slate-800 hover:bg-purple-950/40 border border-slate-700 hover:border-purple-500/50 rounded-xl text-xs font-semibold text-slate-200 transition-all flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-circle-xmark text-purple-400"></i> Yazılamaz / Sonsuz Devirsiz (İrrasyonel Gibi)
+                <!-- STEP 1: MULTI-QUESTION PREDICTION / ELCITATION -->
+                <div id="step-1-container" class="space-y-4 animate-fadeIn">
+                    <div class="p-5 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-5">
+                        <div>
+                            <h4 class="text-sm font-bold text-amber-300 mb-1 flex items-center gap-2">
+                                <i class="fa-solid fa-magnifying-glass-chart"></i> 1. Adım: Mikroskoptan Önce Fikir Yürütelim!
+                            </h4>
+                            <p class="text-xs text-slate-400">Mikroskobu çalıştırmadan önce bu sayının doğası hakkında kendi tahminlerini işaretle:</p>
+                        </div>
+
+                        <!-- Soru 1 -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold text-slate-200">
+                                <span class="text-cyan-400 font-bold mr-1">Soru 1:</span> Bu sayının dış görünüşü veya kök/virgül yapısı sana ne ipucu veriyor?
+                            </label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5" id="q1-options">
+                                <button type="button" onclick="selectOption('q1', 'Düzenli / Tam çıkabilir gibi', this)" class="option-btn p-2.5 bg-slate-800/90 hover:bg-slate-800 border border-slate-700 rounded-xl text-xs text-slate-300 text-left transition-all">
+                                    <i class="fa-regular fa-circle mr-1.5 text-cyan-400"></i> Düzenli / Dışarı tam çıkabilir
+                                </button>
+                                <button type="button" onclick="selectOption('q1', 'Düzensiz / Sonsuza gidiyor gibi', this)" class="option-btn p-2.5 bg-slate-800/90 hover:bg-slate-800 border border-slate-700 rounded-xl text-xs text-slate-300 text-left transition-all">
+                                    <i class="fa-regular fa-circle mr-1.5 text-cyan-400"></i> Düzensiz / Sonsuza gidiyor gibi
+                                </button>
+                                <button type="button" onclick="selectOption('q1', 'Tam emin değilim, incelenmeli', this)" class="option-btn p-2.5 bg-slate-800/90 hover:bg-slate-800 border border-slate-700 rounded-xl text-xs text-slate-300 text-left transition-all">
+                                    <i class="fa-regular fa-circle mr-1.5 text-cyan-400"></i> Görünüşü yanıltıcı olabilir
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Soru 2 -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold text-slate-200">
+                                <span class="text-cyan-400 font-bold mr-1">Soru 2:</span> Virgülden sonraki basamakları hakkında ne düşünüyorsun?
+                            </label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="q2-options">
+                                <button type="button" onclick="selectOption('q2', 'Sonlu veya düzenli tekrar eden (devirli)', this)" class="option-btn p-2.5 bg-slate-800/90 hover:bg-slate-800 border border-slate-700 rounded-xl text-xs text-slate-300 text-left transition-all">
+                                    <i class="fa-regular fa-circle mr-1.5 text-amber-400"></i> Sonlu ya da düzenli tekrar (devir) var
+                                </button>
+                                <button type="button" onclick="selectOption('q2', 'Kural olmadan sonsuza uzanıyor', this)" class="option-btn p-2.5 bg-slate-800/90 hover:bg-slate-800 border border-slate-700 rounded-xl text-xs text-slate-300 text-left transition-all">
+                                    <i class="fa-regular fa-circle mr-1.5 text-amber-400"></i> Hiçbir kural olmadan sonsuza gidiyor
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Soru 3 -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold text-slate-200">
+                                <span class="text-cyan-400 font-bold mr-1">Soru 3:</span> Son kararın ne? İki tam sayının oranı ($\frac{a}{b}$) şeklinde yazılabilir mi?
+                            </label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="q3-options">
+                                <button type="button" onclick="selectOption('q3', 'Rasyonel (a/b yazılabilir)', this)" class="option-btn p-3 bg-slate-800/90 hover:bg-emerald-950/30 border border-slate-700 rounded-xl text-xs font-semibold text-slate-200 transition-all flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-circle-check text-emerald-400"></i> Evet, Kesir Olarak Yazılabilir (Rasyonel)
+                                </button>
+                                <button type="button" onclick="selectOption('q3', 'İrrasyonel (a/b yazılamaz)', this)" class="option-btn p-3 bg-slate-800/90 hover:bg-purple-950/30 border border-slate-700 rounded-xl text-xs font-semibold text-slate-200 transition-all flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-circle-xmark text-purple-400"></i> Hayır, Yazılamaz (İrrasyonel)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Microscope Trigger Button -->
+                        <div class="pt-3 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+                            <span id="validation-msg" class="text-xs text-amber-400/90 italic">
+                                <i class="fa-solid fa-circle-info mr-1"></i> Devam etmek için yukarıdaki 3 soruyu da yanıtla!
+                            </span>
+                            <button id="open-microscope-btn" disabled onclick="goToMicroscope()" class="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-cyan-600 to-indigo-600 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed hover:from-cyan-500 hover:to-indigo-500 text-white font-bold rounded-2xl text-xs shadow-lg shadow-cyan-600/20 transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-microscope text-sm"></i> Hadi bakalım, gerçekten bu şekilde miymiş? Mikroskop bize ne söyleyecek!
                             </button>
                         </div>
                     </div>
@@ -188,41 +248,53 @@
 
                 <!-- STEP 2: MICROSCOPE VERIFICATION (Hidden initially) -->
                 <div id="step-2-container" class="hidden space-y-4 animate-fadeIn">
-                    <div class="p-4 bg-slate-900/90 rounded-2xl border border-cyan-500/30">
-                        <div class="flex justify-between items-center mb-3">
+                    <div class="p-5 bg-slate-900/90 rounded-2xl border border-cyan-500/40 space-y-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-800 pb-3">
                             <h4 class="text-sm font-bold text-cyan-300 flex items-center gap-2">
-                                <i class="fa-solid fa-microscope"></i> 2. Adım: Mikroskop Altında Bilimsel İnceleme
+                                <i class="fa-solid fa-microscope"></i> 2. Adım: Mikroskop Raporu & Hipotez Karşılaştırması
                             </h4>
-                            <span class="text-xs text-emerald-400 font-medium"><i class="fa-solid fa-check mr-1"></i> Hipotez Test Edildi! Bakalım düşüncelerimiz doğru muymuş?</span>
+                            <span class="text-xs bg-cyan-950/80 text-cyan-300 px-3 py-1 rounded-full border border-cyan-500/30">
+                                Bakalım düşüncelerimiz doğru muymuş?
+                            </span>
                         </div>
 
-                        <!-- Inspection details grid -->
+                        <!-- Student's Own Predictions Summary Box -->
+                        <div class="p-3.5 bg-indigo-950/30 border border-indigo-500/30 rounded-xl text-xs space-y-1.5">
+                            <span class="font-bold text-indigo-300 block"><i class="fa-solid fa-user-check mr-1"></i> Senin Tahminlerin:</span>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-slate-300">
+                                <div><span class="text-slate-400">Görünüm:</span> <span id="recap-q1" class="font-medium text-white"></span></div>
+                                <div><span class="text-slate-400">Ondalık:</span> <span id="recap-q2" class="font-medium text-white"></span></div>
+                                <div><span class="text-slate-400">İlk Karar:</span> <span id="recap-q3" class="font-medium text-cyan-300"></span></div>
+                            </div>
+                        </div>
+
+                        <!-- Scientific Microscope Results -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                            <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800">
-                                <span class="text-slate-400 font-semibold block mb-1">Kök Durumu:</span>
-                                <p id="inspect-root" class="text-slate-200"></p>
+                            <div class="p-3.5 bg-slate-950/70 rounded-xl border border-slate-800">
+                                <span class="text-cyan-400 font-semibold block mb-1"><i class="fa-solid fa-square-root-variable mr-1"></i> Kök Durumu:</span>
+                                <p id="inspect-root" class="text-slate-200 leading-relaxed"></p>
                             </div>
-                            <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800">
-                                <span class="text-slate-400 font-semibold block mb-1">Ondalık / Virgül:</span>
-                                <p id="inspect-decimal" class="text-slate-200"></p>
+                            <div class="p-3.5 bg-slate-950/70 rounded-xl border border-slate-800">
+                                <span class="text-amber-400 font-semibold block mb-1"><i class="fa-solid fa-ellipsis mr-1"></i> Ondalık / Virgül:</span>
+                                <p id="inspect-decimal" class="text-slate-200 leading-relaxed"></p>
                             </div>
-                            <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800">
-                                <span class="text-slate-400 font-semibold block mb-1">a/b Oranı Biçimi:</span>
-                                <p id="inspect-fraction" class="text-slate-200"></p>
+                            <div class="p-3.5 bg-slate-950/70 rounded-xl border border-slate-800">
+                                <span class="text-emerald-400 font-semibold block mb-1"><i class="fa-solid fa-divide mr-1"></i> a/b Oranı Biçimi:</span>
+                                <p id="inspect-fraction" class="text-slate-200 leading-relaxed"></p>
                             </div>
                         </div>
 
-                        <div class="mt-4 p-3 bg-amber-950/30 border border-amber-500/30 rounded-xl flex gap-2.5 items-start">
+                        <div class="p-3.5 bg-amber-950/30 border border-amber-500/30 rounded-xl flex gap-2.5 items-start">
                             <i class="fa-solid fa-lightbulb text-amber-400 mt-0.5"></i>
                             <div>
-                                <span class="text-xs font-bold text-amber-300 block">Başmühendis Notu:</span>
-                                <p id="inspect-hint" class="text-xs text-amber-100"></p>
+                                <span class="text-xs font-bold text-amber-300 block">Mikroskop Bulgusu:</span>
+                                <p id="inspect-hint" class="text-xs text-amber-100 leading-relaxed"></p>
                             </div>
                         </div>
 
-                        <div class="mt-4 flex justify-end">
-                            <button onclick="goToStep3()" class="px-5 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-cyan-600/30 transition-all flex items-center gap-2">
-                                Sonuç ve Tüpe Gönder <i class="fa-solid fa-arrow-right"></i>
+                        <div class="pt-2 flex justify-end">
+                            <button onclick="goToStep3()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2">
+                                Şimdi Tüpünü Seçelim <i class="fa-solid fa-arrow-right"></i>
                             </button>
                         </div>
                     </div>
@@ -230,10 +302,11 @@
 
                 <!-- STEP 3: CLASSIFICATION / DROP ZONE CHOICE (Hidden initially) -->
                 <div id="step-3-container" class="hidden space-y-4 animate-fadeIn">
-                    <div class="p-4 bg-slate-900/90 rounded-2xl border border-indigo-500/30">
-                        <h4 class="text-sm font-bold text-indigo-300 mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-vials"></i> 3. Adım: Bu Sayıyı Hangi Laboratuvar Tüpüne Yerleştirelim?
+                    <div class="p-5 bg-slate-900/90 rounded-2xl border border-indigo-500/30">
+                        <h4 class="text-sm font-bold text-indigo-300 mb-1 flex items-center gap-2">
+                            <i class="fa-solid fa-vials"></i> 3. Adım: Son Karar! Bu Sayıyı Nereye Atalım?
                         </h4>
+                        <p class="text-xs text-slate-400 mb-4">Mikroskop verilerine göre numuneyi uygun laboratuvar tüpüne yerleştir:</p>
                         
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <!-- Rational Jar Button -->
@@ -242,7 +315,7 @@
                                     Q
                                 </div>
                                 <div>
-                                    <h5 class="text-emerald-300 font-bold font-display text-sm">Rasyonel Sayı Tüpü</h5>
+                                    <h5 class="text-emerald-300 font-bold font-display text-sm">Rasyonel Sayı Tüpüne At</h5>
                                     <p class="text-xs text-emerald-400/70">a/b şeklinde yazılabilir</p>
                                 </div>
                             </button>
@@ -253,7 +326,7 @@
                                     I
                                 </div>
                                 <div>
-                                    <h5 class="text-purple-300 font-bold font-display text-sm">İrrasyonel Sayı Tüpü</h5>
+                                    <h5 class="text-purple-300 font-bold font-display text-sm">İrrasyonel Sayı Tüpüne At</h5>
                                     <p class="text-xs text-purple-400/70">a/b şeklinde yazılamaz</p>
                                 </div>
                             </button>
@@ -264,10 +337,10 @@
             </div>
         </div>
 
-        <!-- Target Jars Archive Display (Visual Storage of Completed Numbers) -->
+        <!-- Target Jars Archive Display -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Rasyonel Tüpü -->
-            <div class="glass-card rounded-3xl p-5 border border-emerald-500/30 bg-emerald-950/10 flex flex-col min-h-[200px]">
+            <div class="glass-card rounded-3xl p-5 border border-emerald-500/30 bg-emerald-950/10 flex flex-col min-h-[180px]">
                 <div class="flex justify-between items-center mb-3 border-b border-emerald-500/20 pb-2">
                     <h3 class="text-sm font-bold text-emerald-300 font-display flex items-center gap-2">
                         <span class="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">Q</span> Rasyonel Arşivi
@@ -278,7 +351,7 @@
             </div>
 
             <!-- İrrasyonel Tüpü -->
-            <div class="glass-card rounded-3xl p-5 border border-purple-500/30 bg-purple-950/10 flex flex-col min-h-[200px]">
+            <div class="glass-card rounded-3xl p-5 border border-purple-500/30 bg-purple-950/10 flex flex-col min-h-[180px]">
                 <div class="flex justify-between items-center mb-3 border-b border-purple-500/20 pb-2">
                     <h3 class="text-sm font-bold text-purple-300 font-display flex items-center gap-2">
                         <span class="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">I</span> İrrasyonel Arşivi
@@ -291,12 +364,12 @@
 
         <!-- End Game Summary Section -->
         <div id="summary-section" class="hidden glass-card rounded-3xl p-6 border border-indigo-500/30 bg-indigo-950/20 shadow-2xl">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div>
                     <h2 class="text-xl font-bold text-indigo-300 font-display flex items-center gap-2">
                         <i class="fa-solid fa-graduation-cap text-amber-400"></i> Tebrikler <span id="summary-player-name" class="text-cyan-400"></span>! Antik Sandık Açıldı!
                     </h2>
-                    <p class="text-xs text-slate-400">Tüm sayıları başarıyla analiz ettin ve laboratuvar görevini tamamladın.</p>
+                    <p class="text-xs text-slate-400">Tüm sayıları önce sorguladın, mikroskopla test ettin ve doğru tüplere yerleştirdin.</p>
                 </div>
                 <button onclick="initGame()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition-all">
                     <i class="fa-solid fa-rotate-right"></i> Yeniden Başla
@@ -333,6 +406,7 @@
             score: 0,
             placedCount: 0,
             activeNumber: null,
+            predictions: { q1: null, q2: null, q3: null },
             results: {}
         };
 
@@ -364,6 +438,12 @@
                 if(!this.synth) return;
                 Tone.start();
                 this.synth.triggerAttackRelease(["E5"], "16n");
+            },
+            playMicroscope() {
+                if(!this.init) this.setup();
+                if(!this.synth) return;
+                Tone.start();
+                this.synth.triggerAttackRelease(["G4", "B4", "D5"], "16n");
             }
         };
 
@@ -388,6 +468,8 @@
             }
         });
 
+        document.getElementById('reset-btn').addEventListener('click', initGame);
+
         window.addEventListener('DOMContentLoaded', () => {
             playerNameInput.focus();
         });
@@ -396,6 +478,7 @@
             state.score = 0;
             state.placedCount = 0;
             state.activeNumber = null;
+            state.predictions = { q1: null, q2: null, q3: null };
             state.results = {};
 
             updateScoreboard();
@@ -413,7 +496,7 @@
             const queueEl = document.getElementById('number-queue');
             queueEl.innerHTML = '';
             NUMBERS_DATA.forEach(num => {
-                if(state.results[num.id]) return; // Completed ones are removed from queue
+                if(state.results[num.id]) return;
 
                 const btn = document.createElement('button');
                 btn.className = `px-4 py-2.5 rounded-2xl font-display font-bold text-sm border transition-all flex items-center gap-2 ${state.activeNumber && state.activeNumber.id === num.id ? 'bg-cyan-600 text-white border-cyan-400 shadow-lg shadow-cyan-600/30' : 'bg-slate-900 text-cyan-300 border-slate-700 hover:bg-slate-800'}`;
@@ -428,13 +511,20 @@
 
         function selectNumber(num) {
             state.activeNumber = num;
+            state.predictions = { q1: null, q2: null, q3: null };
             renderQueue();
 
             document.getElementById('station-empty').classList.add('hidden');
             document.getElementById('station-active').classList.remove('hidden');
 
             document.getElementById('active-symbol-display').textContent = num.symbol;
-            document.getElementById('station-title').textContent = `${num.symbol} Numunesi İncelemede`;
+            document.getElementById('station-title').textContent = `${num.symbol} Numunesi İnceleniyor`;
+
+            // Clear previous option selections
+            document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById('open-microscope-btn').disabled = true;
+            document.getElementById('validation-msg').innerHTML = '<i class="fa-solid fa-circle-info mr-1"></i> Devam etmek için yukarıdaki 3 soruyu da yanıtla!';
+            document.getElementById('validation-msg').className = 'text-xs text-amber-400/90 italic';
 
             // Reset to Step 1
             document.getElementById('step-1-container').classList.remove('hidden');
@@ -446,15 +536,37 @@
             document.getElementById('badge-step-3').className = 'px-3 py-1.5 rounded-xl bg-slate-800 text-slate-400 border border-slate-700';
         }
 
-        function makePrediction(userGuess) {
+        function selectOption(questionKey, value, btnEl) {
             SoundFX.playClick();
-            // Move to Step 2: Microscope Inspection
+            state.predictions[questionKey] = value;
+
+            // Highlight selected button in its group
+            const parent = document.getElementById(`${questionKey}-options`);
+            parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            btnEl.classList.add('selected');
+
+            // Check if all 3 questions are answered
+            if(state.predictions.q1 && state.predictions.q2 && state.predictions.q3) {
+                document.getElementById('open-microscope-btn').disabled = false;
+                document.getElementById('validation-msg').innerHTML = '<i class="fa-solid fa-check-circle mr-1"></i> Tüm tahminler hazır! Şimdi mikroskobu çalıştırabilirsin.';
+                document.getElementById('validation-msg').className = 'text-xs text-emerald-400 font-medium';
+            }
+        }
+
+        function goToMicroscope() {
+            SoundFX.playMicroscope();
             document.getElementById('step-1-container').classList.add('hidden');
             document.getElementById('step-2-container').classList.remove('hidden');
 
             document.getElementById('badge-step-1').className = 'px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
             document.getElementById('badge-step-2').className = 'px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40';
 
+            // Populate student's recap
+            document.getElementById('recap-q1').textContent = state.predictions.q1;
+            document.getElementById('recap-q2').textContent = state.predictions.q2;
+            document.getElementById('recap-q3').textContent = state.predictions.q3;
+
+            // Populate microscope facts
             const num = state.activeNumber;
             document.getElementById('inspect-root').textContent = num.rootInfo;
             document.getElementById('inspect-decimal').textContent = num.decimalInfo;
@@ -498,7 +610,7 @@
                 }
             } else {
                 SoundFX.playWrong();
-                alert('Yanlış tüp! Mikroskop verilerini ve a/b kuralını tekrar gözden geçir.');
+                alert('Yanlış tüp! Mikroskop raporundaki a/b ve ondalık verilerini tekrar incele.');
             }
         }
 
